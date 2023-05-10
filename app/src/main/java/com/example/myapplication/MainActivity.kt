@@ -79,8 +79,6 @@ class Block1(
     }
 }
 
-class Block
-
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -145,25 +143,18 @@ fun iternalContent(){
 
 @Composable
 fun listOfItems(){
-    var items by remember {
-        mutableStateOf(
-            listOf<Block>()
-        )
-    }
+    var items = remember { mutableStateListOf<Block>() }
+
+
     Column() {
         LazyColumn(
             modifier = Modifier
-                .fillMaxHeight(0.8f),
+                .height(630.dp)
+                .background(color = Color.Blue),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            items(items, { it }) {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.LightGray.copy(alpha = 0.2f))
-                        .padding(24.dp),
-                    text = "I love $it"
-                )
+            items(items) {
+                drawBlock(it,items, items.indexOf(it))
             }
             item() {
 
@@ -184,11 +175,25 @@ fun listOfItems(){
                     .clip(shape = RoundedCornerShape(4.dp))
                     .background(Color.Gray)
                     .clickable {
-                               items+=Block()
+                                items.add(Block("Block"))
                                },
                 contentAlignment = Alignment.Center
             ){
-                Text(text = "Hello", modifier = Modifier.padding(30.dp))
+                Text(text = "Block", modifier = Modifier.padding(30.dp))
+            }
+            Box(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .clip(shape = RoundedCornerShape(4.dp))
+                    .background(Color.Gray)
+                    .clickable {
+                        items.add(Block("Other"))
+                    },
+                contentAlignment = Alignment.Center
+            ){
+                Text(text = "Other", modifier = Modifier.padding(30.dp))
             }
         }
     }
