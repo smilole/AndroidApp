@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -25,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Job
@@ -293,13 +296,15 @@ fun ReorderableList(
                     .height(70.dp)
                     .background(Color.White, shape = RoundedCornerShape(4.dp))
                     .fillMaxWidth()
-            ) { Text(text = "Item ${item.id}") }
+            ) {
+                checkId(item)
+            }
         }
     }
 }
 @Composable
 fun Screen() {
-    var list = listOf(ReorderItem(1), ReorderItem(2),ReorderItem(1), ReorderItem(2),ReorderItem(1), ReorderItem(2)).toMutableStateList()
+    var list = listOf<ReorderItem>(ReorderItem(1),ReorderItem(2),ReorderItem(3),ReorderItem(4)).toMutableStateList()
 
     Column {
         ReorderableList(
@@ -318,12 +323,35 @@ fun Screen() {
                 modifier = Modifier
                     .size(100.dp)
                     .background(Color.LightGray)
-                    .clickable { list += ReorderItem(55555) },
+                    .clickable { list += ReorderItem(0) },
                 contentAlignment = Alignment.Center
 
             ){
-                Text(text = "Hello World!")
+                Text(text = "Инициализация")
             }
+        }
+    }
+}
+
+@Composable
+fun checkId(item:ReorderItem){
+    when(item.id){
+        0 -> {
+            var value by remember { mutableStateOf(String()) }
+            TextField(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .fillMaxSize(),
+                value=value,
+                onValueChange = {newText->
+                    if(newText.last() !in listOf('0','1','2','3','4','5','6','7','8','9')) value = newText
+                },
+                placeholder = {Text("Введите переменные через запятую")},
+                shape = RoundedCornerShape(5.dp),
+            )
+        }
+        else -> {
+            Text("This is block number ${item.id}")
         }
     }
 }
