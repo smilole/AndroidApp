@@ -276,7 +276,7 @@ fun ReorderableList(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         itemsIndexed(items) { index, item ->
-            Column(
+            Card(
                 modifier = Modifier
                     .composed {
                         val offsetOrNull =
@@ -289,6 +289,7 @@ fun ReorderableList(
                                 translationY = offsetOrNull ?: 0f
                             }
                     }
+                    .padding(horizontal = 5.dp)
                     .height(70.dp)
                     .background(Color.White, shape = RoundedCornerShape(4.dp))
                     .fillMaxWidth()
@@ -298,7 +299,7 @@ fun ReorderableList(
 }
 @Composable
 fun Screen() {
-    val list = listOf(ReorderItem(1), ReorderItem(2),ReorderItem(1), ReorderItem(2),ReorderItem(1), ReorderItem(2),ReorderItem(1), ReorderItem(2),ReorderItem(1), ReorderItem(2),ReorderItem(1), ReorderItem(2)).toMutableStateList()
+    var list = listOf(ReorderItem(1), ReorderItem(2),ReorderItem(1), ReorderItem(2),ReorderItem(1), ReorderItem(2)).toMutableStateList()
 
     Column {
         ReorderableList(
@@ -309,9 +310,20 @@ fun Screen() {
             modifier = Modifier
                 .fillMaxSize()
                 .horizontalScroll(rememberScrollState())
-                .background(Color.DarkGray)
+                .background(Color.DarkGray),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ){
+            Box(
+                modifier = Modifier
+                    .size(100.dp)
+                    .background(Color.LightGray)
+                    .clickable { list += ReorderItem(55555) },
+                contentAlignment = Alignment.Center
 
+            ){
+                Text(text = "Hello World!")
+            }
         }
     }
 }
