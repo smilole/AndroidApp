@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
 import androidx.compose.material.OutlinedTextField
@@ -28,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -61,52 +63,66 @@ fun <T> MutableList<T>.move(from: Int, to: Int) {
 
 @Composable
 fun BlockInit(block:BlockInit){
-    var value by remember { mutableStateOf(String()) }
-    block.firstValue = value
-    Row(){
+    var firstValue by remember { mutableStateOf(block.firstValue) }
+    var secondValue by remember { mutableStateOf(block.secondValue) }
+    block.firstValue = firstValue
+    block.secondValue = secondValue
+    val focusManager = LocalFocusManager.current
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ){
         OutlinedTextField(
             modifier = Modifier
-                .width(100.dp)
                 .padding(5.dp)
-                .background(Color.Red)
-            //.fillMaxSize()
-            ,
-            value=value,
-            onValueChange = {value = it },
-            placeholder = {Text("Введите переменные через запятую")},
+                .fillMaxHeight()
+                .fillMaxWidth(0.45f),
+            value=firstValue,
+            onValueChange = { firstValue = it },
+            placeholder = {Text("Название")},
             shape = RoundedCornerShape(5.dp),
+            singleLine = true,
+            keyboardActions = KeyboardActions(onDone =  {
+                focusManager.clearFocus()
+            })
+        )
+        Text(
+            modifier = Modifier
+                .padding(horizontal = 5.dp),
+            text = "="
+        )
+        OutlinedTextField(
+            modifier = Modifier
+                .padding(5.dp)
+                .fillMaxHeight()
+                .fillMaxWidth(),
+            value=secondValue,
+            onValueChange = { secondValue = it },
+            placeholder = {Text("Значение")},
+            shape = RoundedCornerShape(5.dp),
+            singleLine = true,
+            keyboardActions = KeyboardActions(onDone =  {
+                focusManager.clearFocus()
+            })
         )
     }
-
 }
 
-/*
 @Composable
-fun checkId(item:ReorderItem,modifier:Modifier){
-    when(item.id){
-        0 -> {
-            var value by remember { mutableStateOf(String()) }
-            Row(){
-            OutlinedTextField(
-                modifier = Modifier
-                    .width(100.dp)
-                    .padding(5.dp)
-                    .background(Color.Red)
-                    //.fillMaxSize()
-                        ,
-                value=value,
-                onValueChange = {newText->
-                    if(newText.last() !in listOf('0','1','2','3','4','5','6','7','8','9')) value = newText
-                },
-                placeholder = {Text("Введите переменные через запятую")},
-                shape = RoundedCornerShape(5.dp),
-            )
-            }
-        }
-        else -> {
-            Text("This is block number ${item.id}", modifier = modifier)
-        }
-    }
+fun BlockDeclaration(block:BlockDeclaration) {
+    var value by remember { mutableStateOf(block.value) }
+    block.value = value
+    val focusManager = LocalFocusManager.current
+    OutlinedTextField(
+        modifier = Modifier
+            .padding(5.dp)
+            .fillMaxSize(),
+        value = value,
+        onValueChange = { value = it },
+        placeholder = { Text("Введите переменные через запятую") },
+        shape = RoundedCornerShape(5.dp),
+        singleLine = true,
+        keyboardActions = KeyboardActions(onDone = {
+            focusManager.clearFocus()
+        })
+    )
 }
-
- */
