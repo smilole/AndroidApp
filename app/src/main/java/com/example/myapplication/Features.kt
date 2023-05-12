@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
@@ -32,103 +33,10 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.sql.Blob
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-/*fun convertPixelsToDp(px: Float, context: Context): Float {
-    return px / (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
-}
-@Composable
-fun drawBlock(
-    block: Block,
-    items: MutableList<Block>,
-    index: Int
-) {
-    val localContext = LocalContext.current
-    var offsetX = remember{
-        mutableStateOf(0f)
-    }
-    var offsetY = remember{
-        mutableStateOf(0f)
-    }
-    var isDragged = remember {
-        mutableStateOf(false)
-    }
-    var premennaya = offsetY.value
-
-
-    Card(
-        modifier = Modifier
-            .offset {
-                IntOffset(x=offsetX.value.roundToInt(),y=offsetY.value.roundToInt())
-            }
-            .pointerInput(Unit){
-                detectDragGesturesAfterLongPress(
-                    onDragStart = {
-                        isDragged.value = true
-                        premennaya = offsetY.value
-                                  },
-                    onDragEnd = {
-                        isDragged.value = false
-                        premennaya -= offsetY.value
-                        var t = (convertPixelsToDp(abs(premennaya),localContext)/80).toInt()
-                        var lol = if (premennaya>0) 0 else 1
-                        Log.d("MyLog","t=$t lol=$lol")
-                        if(t>0){
-                            if(lol==1){
-                                if(items.size>index+t) {
-                                    items.add(index + t, items[index])
-                                    items.removeAt(index)
-                                }
-                                else{
-                                    items.add(items[index])
-                                    items.removeAt(index)
-                                }
-                            }
-                            else{
-                                if(index-t>=0) {
-                                    items.add(index - t, items[index])
-                                    items.removeAt(index)
-                                }
-                            }
-                        }
-                        else{
-                            var kek = items[index]
-                            items.removeAt(index)
-                            items.add(index, kek)
-                        }
-
-                    }
-                ) { change, dragAmount ->
-                    change.consume()
-                    //offsetX.value += dragAmount.x
-                    offsetY.value += dragAmount.y
-                    //Log.d("MyLog","Y:${offsetY.value} dragAmount: ${dragAmount.y}")
-                }
-
-            }
-            .fillMaxWidth()
-            .height(block.height)
-            .background(Color.LightGray.copy(alpha = 0.2f))
-    ){
-        when(block.type){
-            "Block" -> {
-                Text(text = "Block")
-            }
-            "Other" -> {
-                Text(text = "Other")
-            }
-        }
-    }
-}
-*/
-
-/*
-    LazyListItemInfo.index is the item's absolute index in the list
-
-    Based on the item's "relative position" with the "currently top" visible item,
-    this returns LazyListItemInfo corresponding to it
-*/
 fun LazyListState.getVisibleItemInfoFor(absoluteIndex: Int): LazyListItemInfo? {
     return this.layoutInfo.visibleItemsInfo.getOrNull(absoluteIndex - this.layoutInfo.visibleItemsInfo.first().index)
 }
@@ -149,199 +57,43 @@ fun <T> MutableList<T>.move(from: Int, to: Int) {
     val element = this.removeAt(from) ?: return
     this.add(to, element)
 }
-@Composable
-fun rememberReorderableListState(
-    lazyListState: LazyListState = rememberLazyListState(),
-    onMove: (Int, Int) -> Unit,
-): ReorderableListState {
-    return remember { ReorderableListState(lazyListState = lazyListState, onMove = onMove) }
-}
 
-class ReorderableListState(
-    val lazyListState: LazyListState,
-    private val onMove: (Int, Int) -> Unit
-) {
-    var draggedDistance by mutableStateOf(0f)
-
-    // used to obtain initial offsets on drag start
-    var initiallyDraggedElement by mutableStateOf<LazyListItemInfo?>(null)
-
-    var currentIndexOfDraggedItem by mutableStateOf<Int?>(null)
-
-    val initialOffsets: Pair<Int, Int>?
-        get() = initiallyDraggedElement?.let { Pair(it.offset, it.offsetEnd) }
-
-    val elementDisplacement: Float?
-        get() = currentIndexOfDraggedItem
-            ?.let { lazyListState.getVisibleItemInfoFor(absoluteIndex = it) }
-            ?.let { item -> (initiallyDraggedElement?.offset ?: 0f).toFloat() + draggedDistance - item.offset }
-
-    val currentElement: LazyListItemInfo?
-        get() = currentIndexOfDraggedItem?.let {
-            lazyListState.getVisibleItemInfoFor(absoluteIndex = it)
-        }
-
-    var overscrollJob by mutableStateOf<Job?>(null)
-
-    fun onDragStart(offset: Offset) {
-        lazyListState.layoutInfo.visibleItemsInfo
-            .firstOrNull { item -> offset.y.toInt() in item.offset..(item.offset + item.size) }
-            ?.also {
-                currentIndexOfDraggedItem = it.index
-                initiallyDraggedElement = it
-            }
-    }
-
-    fun onDragInterrupted() {
-        draggedDistance = 0f
-        currentIndexOfDraggedItem = null
-        initiallyDraggedElement = null
-        overscrollJob?.cancel()
-    }
-
-    fun onDrag(offset: Offset) {
-        draggedDistance += offset.y
-
-        initialOffsets?.let { (topOffset, bottomOffset) ->
-            val startOffset = topOffset + draggedDistance
-            val endOffset = bottomOffset + draggedDistance
-
-            currentElement?.let { hovered ->
-                lazyListState.layoutInfo.visibleItemsInfo
-                    .filterNot { item -> item.offsetEnd < startOffset || item.offset > endOffset || hovered.index == item.index }
-                    .firstOrNull { item ->
-                        val delta = startOffset - hovered.offset
-                        when {
-                            delta > 0 -> (endOffset > item.offsetEnd)
-                            else -> (startOffset < item.offset)
-                        }
-                    }
-                    ?.also { item ->
-                        currentIndexOfDraggedItem?.let { current -> onMove.invoke(current, item.index) }
-                        currentIndexOfDraggedItem = item.index
-                    }
-            }
-        }
-    }
-
-    fun checkForOverScroll(): Float {
-        return initiallyDraggedElement?.let {
-            val startOffset = it.offset + draggedDistance
-            val endOffset = it.offsetEnd + draggedDistance
-
-            return@let when {
-                draggedDistance > 0 -> (endOffset - lazyListState.layoutInfo.viewportEndOffset).takeIf { diff -> diff > 0 }
-                draggedDistance < 0 -> (startOffset - lazyListState.layoutInfo.viewportStartOffset).takeIf { diff -> diff < 0 }
-                else -> null
-            }
-        } ?: 0f
-    }
-}
 
 @Composable
-fun ReorderableList(
-    items: List<ReorderItem>,
-    onMove: (Int, Int) -> Unit,
-    modifier: Modifier = Modifier
-) {
-
-    val scope = rememberCoroutineScope()
-
-    var overscrollJob by remember { mutableStateOf<Job?>(null) }
-
-    val reorderableListState = rememberReorderableListState(onMove = onMove)
-
-    LazyColumn(
-        modifier = modifier
-            .pointerInput(Unit) {
-                detectDragGesturesAfterLongPress(
-                    onDrag = { change, offset ->
-                        change.consume()
-                        reorderableListState.onDrag(offset)
-
-                        if (overscrollJob?.isActive == true)
-                            return@detectDragGesturesAfterLongPress
-
-                        reorderableListState.checkForOverScroll()
-                            .takeIf { it != 0f }
-                            ?.let { overscrollJob = scope.launch { reorderableListState.lazyListState.scrollBy(it) } }
-                            ?: run { overscrollJob?.cancel() }
-                    },
-                    onDragStart = { offset -> reorderableListState.onDragStart(offset) },
-                    onDragEnd = { reorderableListState.onDragInterrupted() },
-                    onDragCancel = { reorderableListState.onDragInterrupted() }
-                )
-            }
-            .fillMaxWidth()
-            .fillMaxHeight(0.8f)
-            .background(Color.LightGray),
-        state = reorderableListState.lazyListState,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        itemsIndexed(items) { index, item ->
-            Card(
-                modifier = Modifier
-                    .composed {
-                        val offsetOrNull =
-                            reorderableListState.elementDisplacement.takeIf {
-                                index == reorderableListState.currentIndexOfDraggedItem
-                            }
-
-                        Modifier
-                            .graphicsLayer {
-                                translationY = offsetOrNull ?: 0f
-                            }
-                    }
-                    .padding(horizontal = 5.dp)
-                    .height(70.dp)
-                    .background(Color.White, shape = RoundedCornerShape(4.dp))
-                    .fillMaxWidth()
-            ) {
-                checkId(item)
-            }
-        }
-    }
-}
-@Composable
-fun Screen() {
-    var list = listOf<ReorderItem>(ReorderItem(1),ReorderItem(2),ReorderItem(3),ReorderItem(4)).toMutableStateList()
-
-    Column {
-        ReorderableList(
-            items = list,
-            onMove = { fromIndex, toIndex -> list.move(fromIndex, toIndex) }
-        )
-        Row(
+fun BlockInit(block:BlockInit){
+    var value by remember { mutableStateOf(String()) }
+    block.firstValue = value
+    Row(){
+        OutlinedTextField(
             modifier = Modifier
-                .fillMaxSize()
-                .horizontalScroll(rememberScrollState())
-                .background(Color.DarkGray),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ){
-            Box(
-                modifier = Modifier
-                    .size(100.dp)
-                    .background(Color.LightGray)
-                    .clickable { list += ReorderItem(0) },
-                contentAlignment = Alignment.Center
-
-            ){
-                Text(text = "Инициализация")
-            }
-        }
+                .width(100.dp)
+                .padding(5.dp)
+                .background(Color.Red)
+            //.fillMaxSize()
+            ,
+            value=value,
+            onValueChange = {value = it },
+            placeholder = {Text("Введите переменные через запятую")},
+            shape = RoundedCornerShape(5.dp),
+        )
     }
+
 }
 
+/*
 @Composable
-fun checkId(item:ReorderItem){
+fun checkId(item:ReorderItem,modifier:Modifier){
     when(item.id){
         0 -> {
             var value by remember { mutableStateOf(String()) }
-            TextField(
+            Row(){
+            OutlinedTextField(
                 modifier = Modifier
+                    .width(100.dp)
                     .padding(5.dp)
-                    .fillMaxSize(),
+                    .background(Color.Red)
+                    //.fillMaxSize()
+                        ,
                 value=value,
                 onValueChange = {newText->
                     if(newText.last() !in listOf('0','1','2','3','4','5','6','7','8','9')) value = newText
@@ -349,9 +101,12 @@ fun checkId(item:ReorderItem){
                 placeholder = {Text("Введите переменные через запятую")},
                 shape = RoundedCornerShape(5.dp),
             )
+            }
         }
         else -> {
-            Text("This is block number ${item.id}")
+            Text("This is block number ${item.id}", modifier = modifier)
         }
     }
 }
+
+ */
