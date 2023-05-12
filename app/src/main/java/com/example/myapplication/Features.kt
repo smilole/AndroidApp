@@ -3,15 +3,13 @@ package com.example.myapplication
 import android.content.Context
 import android.util.DisplayMetrics
 import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
 import androidx.compose.material.Text
@@ -27,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -276,7 +275,6 @@ fun ReorderableList(
             .fillMaxHeight(0.8f)
             .background(Color.LightGray),
         state = reorderableListState.lazyListState,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         itemsIndexed(items) { index, item ->
             Card(
@@ -292,19 +290,27 @@ fun ReorderableList(
                                 translationY = offsetOrNull ?: 0f
                             }
                     }
-                    .padding(horizontal = 5.dp)
+                    .padding(5.dp)
                     .height(70.dp)
                     .background(Color.White, shape = RoundedCornerShape(4.dp))
                     .fillMaxWidth()
             ) {
-                checkId(item)
+                Row(){
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(50.dp)
+                            .background(Color.DarkGray)
+                    ){}
+                    checkId(item)
+                }
             }
         }
     }
 }
 @Composable
 fun Screen() {
-    var list = listOf<ReorderItem>(ReorderItem(1),ReorderItem(2),ReorderItem(3),ReorderItem(4)).toMutableStateList()
+    var list = listOf<ReorderItem>(ReorderItem(0),ReorderItem(1),ReorderItem(2),ReorderItem(3)).toMutableStateList()
 
     Column {
         ReorderableList(
@@ -317,13 +323,24 @@ fun Screen() {
                 .horizontalScroll(rememberScrollState())
                 .background(Color.DarkGray),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ){
             Box(
                 modifier = Modifier
-                    .size(100.dp)
-                    .background(Color.LightGray)
+                    .size(125.dp)
+                    .padding(5.dp)
+                    .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
                     .clickable { list += ReorderItem(0) },
+                contentAlignment = Alignment.Center
+
+            ){
+                Text(text = "Объявление")
+            }
+            Box(
+                modifier = Modifier
+                    .size(125.dp)
+                    .padding(5.dp)
+                    .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                    .clickable { list += ReorderItem(1) },
                 contentAlignment = Alignment.Center
 
             ){
@@ -337,18 +354,73 @@ fun Screen() {
 fun checkId(item:ReorderItem){
     when(item.id){
         0 -> {
-            var value by remember { mutableStateOf(String()) }
-            TextField(
-                modifier = Modifier
-                    .padding(5.dp)
-                    .fillMaxSize(),
-                value=value,
-                onValueChange = {newText->
-                    if(newText.last() !in listOf('0','1','2','3','4','5','6','7','8','9')) value = newText
-                },
-                placeholder = {Text("Введите переменные через запятую")},
-                shape = RoundedCornerShape(5.dp),
-            )
+            var value by remember { mutableStateOf(item.line) }
+            val focusManager = LocalFocusManager.current
+                TextField(
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .fillMaxSize(),
+                    value=value,
+                    onValueChange = {newText->
+                        value = newText
+                        item.line = newText
+                    },
+                    placeholder = {Text("Введите переменные через запятую")},
+                    shape = RoundedCornerShape(5.dp),
+                    singleLine = true,
+                    keyboardActions = KeyboardActions(onDone =  {
+                        focusManager.clearFocus()
+
+                    })
+                )
+        }
+        1 -> {
+            var varName by remember { mutableStateOf(item.varName) }
+            var varValue by remember { mutableStateOf(item.varValue) }
+            val focusManager = LocalFocusManager.current
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                TextField(
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .fillMaxHeight()
+                        .fillMaxWidth(0.45f),
+                    value=varName,
+                    onValueChange = {newText->
+                        varName = newText
+                        item.varName = newText
+                    },
+                    placeholder = {Text("Название")},
+                    shape = RoundedCornerShape(5.dp),
+                    singleLine = true,
+                    keyboardActions = KeyboardActions(onDone =  {
+                        focusManager.clearFocus()
+                    })
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(horizontal = 5.dp),
+                    text = "="
+                )
+                TextField(
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .fillMaxHeight()
+                        .fillMaxWidth(),
+                    value=varValue,
+                    onValueChange = {newText->
+                        varValue = newText
+                        item.varValue = newText
+                    },
+                    placeholder = {Text("Значение")},
+                    shape = RoundedCornerShape(5.dp),
+                    singleLine = true,
+                    keyboardActions = KeyboardActions(onDone =  {
+                        focusManager.clearFocus()
+                    })
+                )
+            }
         }
         else -> {
             Text("This is block number ${item.id}")
