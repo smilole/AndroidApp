@@ -88,9 +88,7 @@ fun ReorderableList(
                             .fillMaxHeight()
                             .width(50.dp)
                             .background(Color.DarkGray),
-                    ){
-                        Text(text = "${item.id}${if(item is BlockDeclaration){item.value} else {""}}", color = Color.Red)
-                    }
+                    ){}
                     when(item){
                         is BlockInit -> BlockInit(item)
                         is BlockDeclaration -> BlockDeclaration(item)

@@ -63,10 +63,10 @@ fun <T> MutableList<T>.move(from: Int, to: Int) {
 
 @Composable
 fun BlockInit(block:BlockInit){
-    var firstValue by remember { mutableStateOf(block.firstValue) }
-    var secondValue by remember { mutableStateOf(block.secondValue) }
-    block.firstValue = firstValue
-    block.secondValue = secondValue
+    var firstValue by remember { mutableStateOf("") }
+    var secondValue by remember { mutableStateOf("") }
+    firstValue =  block.firstValue
+    secondValue = block.secondValue
     val focusManager = LocalFocusManager.current
     Row(
         verticalAlignment = Alignment.CenterVertically
@@ -77,7 +77,10 @@ fun BlockInit(block:BlockInit){
                 .fillMaxHeight()
                 .fillMaxWidth(0.45f),
             value=firstValue,
-            onValueChange = { firstValue = it },
+            onValueChange = {
+                firstValue = it
+                block.firstValue = it
+                            },
             placeholder = {Text("Название")},
             shape = RoundedCornerShape(5.dp),
             singleLine = true,
@@ -96,7 +99,10 @@ fun BlockInit(block:BlockInit){
                 .fillMaxHeight()
                 .fillMaxWidth(),
             value=secondValue,
-            onValueChange = { secondValue = it },
+            onValueChange = {
+                secondValue = it
+                block.secondValue = it
+                            },
             placeholder = {Text("Значение")},
             shape = RoundedCornerShape(5.dp),
             singleLine = true,
@@ -109,15 +115,18 @@ fun BlockInit(block:BlockInit){
 
 @Composable
 fun BlockDeclaration(block:BlockDeclaration) {
-    var value by remember { mutableStateOf(block.value) }
-    block.value = value
+    var value by remember { mutableStateOf("") }
+    value = block.value
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
         modifier = Modifier
             .padding(5.dp)
             .fillMaxSize(),
         value = value,
-        onValueChange = { value = it },
+        onValueChange = {
+            value = it
+            block.value = it
+                        },
         placeholder = { Text("Введите переменные через запятую") },
         shape = RoundedCornerShape(5.dp),
         singleLine = true,
@@ -129,8 +138,8 @@ fun BlockDeclaration(block:BlockDeclaration) {
 
 @Composable
 fun BlockIf(block:BlockIf){
-    var value by remember { mutableStateOf(block.value) }
-    block.value = value
+    var value by remember { mutableStateOf("") }
+    value = block.value
     val focusManager = LocalFocusManager.current
     Row(verticalAlignment = Alignment.CenterVertically){
         OutlinedTextField(
@@ -139,7 +148,10 @@ fun BlockIf(block:BlockIf){
                 .fillMaxHeight()
                 .fillMaxWidth(0.8f),
             value = value,
-            onValueChange = { value = it },
+            onValueChange = {
+                value = it
+                block.value = it
+                            },
             placeholder = { Text("Условие") },
             shape = RoundedCornerShape(5.dp),
             singleLine = true,
@@ -160,14 +172,17 @@ fun BlockEnd(block:BlockEnd){
 @Composable
 fun BlockOutput(block:BlockOutput){
     var value by remember { mutableStateOf(block.value) }
-    block.value = value
+    value = block.value
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
         modifier = Modifier
             .padding(5.dp)
             .fillMaxSize(),
         value = value,
-        onValueChange = { value = it },
+        onValueChange = {
+            value = it
+            block.value = it
+                        },
         placeholder = { Text("Вывод") },
         shape = RoundedCornerShape(5.dp),
         singleLine = true,

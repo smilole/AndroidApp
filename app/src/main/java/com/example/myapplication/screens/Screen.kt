@@ -16,7 +16,7 @@ import com.example.myapplication.*
 
 @Composable
 fun Screen() {
-    var list = listOf<Block>(BlockDeclaration(0),BlockDeclaration(1)).toMutableStateList()
+    var list = listOf<Block>(BlockDeclaration(),BlockDeclaration()).toMutableStateList()
     var markCount = 0
     var currentMark = "m$markCount"
 
