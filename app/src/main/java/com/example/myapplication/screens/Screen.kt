@@ -7,8 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.toMutableStateList
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,8 +17,18 @@ import com.example.myapplication.*
 @Composable
 fun Screen() {
     var list = listOf<Block>(BlockDeclaration(0),BlockDeclaration(1)).toMutableStateList()
+    var markCount = 0
+    var currentMark = "m$markCount"
 
     Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.075f)
+                .background(Color.DarkGray)
+        ){
+
+        }
         ReorderableList(
             items = list,
             onMove = { fromIndex, toIndex -> list.move(fromIndex, toIndex) }
@@ -51,6 +60,32 @@ fun Screen() {
                 contentAlignment = Alignment.Center
             ){
                 Text(text = "Инициализация")
+            }
+            Box(
+                modifier = Modifier
+                    .size(125.dp)
+                    .padding(5.dp)
+                    .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                    .clickable {
+                        list.add(BlockIf(currentMark))
+                        list.add(BlockEnd(currentMark))
+                        markCount++
+                        currentMark = "m$markCount"
+                               },
+                contentAlignment = Alignment.Center
+            ){
+                Text(text = "Условие")
+            }
+            Box(
+                modifier = Modifier
+                    .size(125.dp)
+                    .padding(5.dp)
+                    .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                    .clickable { list.add(BlockOutput()) },
+                contentAlignment = Alignment.Center
+
+            ){
+                Text(text = "Вывод")
             }
         }
     }

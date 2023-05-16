@@ -126,3 +126,53 @@ fun BlockDeclaration(block:BlockDeclaration) {
         })
     )
 }
+
+@Composable
+fun BlockIf(block:BlockIf){
+    var value by remember { mutableStateOf(block.value) }
+    block.value = value
+    val focusManager = LocalFocusManager.current
+    Row(verticalAlignment = Alignment.CenterVertically){
+        OutlinedTextField(
+            modifier = Modifier
+                .padding(5.dp)
+                .fillMaxHeight()
+                .fillMaxWidth(0.8f),
+            value = value,
+            onValueChange = { value = it },
+            placeholder = { Text("Условие") },
+            shape = RoundedCornerShape(5.dp),
+            singleLine = true,
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.clearFocus()
+            })
+        )
+        Text(text=":")
+        Text(text="Begin ${block.mark}")
+    }
+}
+
+@Composable
+fun BlockEnd(block:BlockEnd){
+    Text(text = "End ${block.mark}")
+}
+
+@Composable
+fun BlockOutput(block:BlockOutput){
+    var value by remember { mutableStateOf(block.value) }
+    block.value = value
+    val focusManager = LocalFocusManager.current
+    OutlinedTextField(
+        modifier = Modifier
+            .padding(5.dp)
+            .fillMaxSize(),
+        value = value,
+        onValueChange = { value = it },
+        placeholder = { Text("Вывод") },
+        shape = RoundedCornerShape(5.dp),
+        singleLine = true,
+        keyboardActions = KeyboardActions(onDone = {
+            focusManager.clearFocus()
+        })
+    )
+}

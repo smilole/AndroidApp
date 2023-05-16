@@ -80,7 +80,7 @@ fun ReorderableList(
                     .padding(5.dp)
                     .height(70.dp)
                     .background(Color.White, shape = RoundedCornerShape(4.dp))
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             ) {
                 Row(){
                     Box(
@@ -89,11 +89,14 @@ fun ReorderableList(
                             .width(50.dp)
                             .background(Color.DarkGray),
                     ){
-                        Text(text = "${item.id}", color = Color.Red)
+                        Text(text = "${item.id}${if(item is BlockDeclaration){item.value} else {""}}", color = Color.Red)
                     }
                     when(item){
                         is BlockInit -> BlockInit(item)
                         is BlockDeclaration -> BlockDeclaration(item)
+                        is BlockIf -> BlockIf(item)
+                        is BlockEnd -> BlockEnd(item)
+                        is BlockOutput -> BlockOutput(item)
                     }
                 }
             }
