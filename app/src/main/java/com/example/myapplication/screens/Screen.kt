@@ -16,7 +16,7 @@ import com.example.myapplication.*
 
 @Composable
 fun Screen() {
-    var list = listOf<Block>(BlockDeclaration(),BlockDeclaration()).toMutableStateList()
+    var list = listOf<Block>().toMutableStateList()
     var markCount = 0
     var currentMark = "m$markCount"
 
@@ -25,9 +25,16 @@ fun Screen() {
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.075f)
-                .background(Color.DarkGray)
+                .background(Color.DarkGray),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ){
-
+            Text(text = "Hello")
+            Text(text = "World",
+                modifier = Modifier.clickable {
+                        output(list)
+                    }
+                )
         }
         ReorderableList(
             items = list,

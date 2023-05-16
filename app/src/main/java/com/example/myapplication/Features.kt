@@ -191,3 +191,39 @@ fun BlockOutput(block:BlockOutput){
         })
     )
 }
+
+fun output(items: MutableList<Block>){
+    var line = ""
+    var outputList = mutableListOf<String>()
+    var mapOfVariables = mutableMapOf<String,Any>()
+    for(item in items){
+        when(item){
+            is BlockInit -> {
+                line+="${item.firstValue}=${item.secondValue};"
+            }
+            is BlockDeclaration -> {
+                var list = item.value.split(",")
+                for (variable in list){
+                    mapOfVariables.put(variable,0)
+                }
+            }
+            is BlockIf -> {
+                line+="?(${item.value}){"
+            }
+            is BlockEnd -> {
+                line+="}"
+            }
+            is BlockOutput -> {
+                line+="p(${item.value});"
+            }
+        }
+    }
+
+    Log.d("MyLog","line = $line")
+
+    var preTranslatedCode = stringToPolis(line)
+
+    translation(preTranslatedCode,out = outputList, variables = mapOfVariables)
+
+    Log.d("MyLog","list = $outputList \n map = $mapOfVariables")
+}

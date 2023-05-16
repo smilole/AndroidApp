@@ -1,6 +1,6 @@
 package com.example.myapplication
 
-class BlockInit(val string: String): Block() {
+class BlockInit(): Block() {
 
     var firstValue = ""
     var secondValue = ""
