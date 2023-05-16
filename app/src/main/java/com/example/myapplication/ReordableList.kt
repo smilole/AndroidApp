@@ -1,9 +1,11 @@
 package com.example.myapplication
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,15 +31,13 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ReorderableList(
-    items: List<Block>,
+    items: MutableList<Block>,
     onMove: (Int, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     val scope = rememberCoroutineScope()
-
     var overscrollJob by remember { mutableStateOf<Job?>(null) }
-
     val reorderableListState = rememberReorderableListState(onMove = onMove)
 
     LazyColumn(
@@ -84,7 +84,6 @@ fun ReorderableList(
                             reorderableListState.elementDisplacement.takeIf {
                                 index == reorderableListState.currentIndexOfDraggedItem
                             }
-
                         Modifier
                             .graphicsLayer {
                                 translationY = offsetOrNull ?: 0f
@@ -95,9 +94,12 @@ fun ReorderableList(
                     .height(70.dp)
                     .fillMaxWidth()
             ) {
-                when (item) {
-                    is BlockInit -> BlockInit(item)
-                    else -> Text("someothershit")
+                Row() {
+                    when (item) {
+                        is BlockInit -> BlockInit(item)
+                        else -> Text("someothershit")
+                    }
+                    Text("sdad", modifier = Modifier.clickable { items.removeAt(index) })
                 }
                 //checkId(item,modifier)
             }

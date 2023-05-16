@@ -61,8 +61,7 @@ fun <T> MutableList<T>.move(from: Int, to: Int) {
 
 @Composable
 fun BlockInit(block:BlockInit){
-    var value by remember { mutableStateOf(String()) }
-    block.firstValue = value
+    var value by remember { mutableStateOf(block.firstValue) }
     Row(){
         OutlinedTextField(
             modifier = Modifier
@@ -76,6 +75,7 @@ fun BlockInit(block:BlockInit){
             placeholder = {Text("Введите переменные через запятую")},
             shape = RoundedCornerShape(5.dp),
         )
+        Text(text = block.string)
     }
 
 }
