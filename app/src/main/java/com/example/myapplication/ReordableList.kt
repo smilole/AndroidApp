@@ -1,17 +1,12 @@
 package com.example.myapplication
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -37,7 +32,9 @@ fun ReorderableList(
 ) {
 
     val scope = rememberCoroutineScope()
+
     var overscrollJob by remember { mutableStateOf<Job?>(null) }
+
     val reorderableListState = rememberReorderableListState(onMove = onMove)
 
     LazyColumn(
@@ -51,13 +48,9 @@ fun ReorderableList(
                         if (overscrollJob?.isActive == true)
                             return@detectDragGesturesAfterLongPress
 
-                        reorderableListState
-                            .checkForOverScroll()
+                        reorderableListState.checkForOverScroll()
                             .takeIf { it != 0f }
-                            ?.let {
-                                overscrollJob =
-                                    scope.launch { reorderableListState.lazyListState.scrollBy(it) }
-                            }
+                            ?.let { overscrollJob = scope.launch { reorderableListState.lazyListState.scrollBy(it) } }
                             ?: run { overscrollJob?.cancel() }
                     },
                     onDragStart = { offset -> reorderableListState.onDragStart(offset) },
@@ -69,14 +62,8 @@ fun ReorderableList(
             .fillMaxHeight(0.8f)
             .background(Color.LightGray),
         state = reorderableListState.lazyListState,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-
         itemsIndexed(items) { index, item ->
-
-            val modifier = if(index == reorderableListState.currentIndexOfDraggedItem) Modifier.background(
-                Color.Red)
-            else Modifier
             Card(
                 modifier = Modifier
                     .composed {
@@ -84,24 +71,34 @@ fun ReorderableList(
                             reorderableListState.elementDisplacement.takeIf {
                                 index == reorderableListState.currentIndexOfDraggedItem
                             }
+
                         Modifier
                             .graphicsLayer {
                                 translationY = offsetOrNull ?: 0f
                             }
-                            .background(Color.Red)
                     }
-                    .padding(horizontal = 5.dp)
+                    .padding(5.dp)
                     .height(70.dp)
-                    .fillMaxWidth()
+                    .background(Color.White, shape = RoundedCornerShape(4.dp))
+                    .fillMaxWidth(),
             ) {
-                Row() {
-                    when (item) {
-                        is BlockInit -> BlockInit(item)
-                        else -> Text("someothershit")
+                Row(){
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(50.dp)
+                            .background(Color.DarkGray),
+                    ){
+                        Text(text = "${item.id}${if(item is BlockDeclaration){item.value} else {""}}", color = Color.Red)
                     }
-                    Text("sdad", modifier = Modifier.clickable { items.removeAt(index) })
+                    when(item){
+                        is BlockInit -> BlockInit(item)
+                        is BlockDeclaration -> BlockDeclaration(item)
+                        is BlockIf -> BlockIf(item)
+                        is BlockEnd -> BlockEnd(item)
+                        is BlockOutput -> BlockOutput(item)
+                    }
                 }
-                //checkId(item,modifier)
             }
         }
     }
