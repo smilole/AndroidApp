@@ -12,10 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.myapplication.*
 
 @Composable
-fun Screen() {
+fun MainScreen(navController:NavController) {
     var list = listOf<Block>().toMutableStateList()
     var markCount = 0
     var currentMark = "m$markCount"
@@ -32,7 +33,7 @@ fun Screen() {
             Text(text = "Hello")
             Text(text = "World",
                 modifier = Modifier.clickable {
-                        output(list)
+                    navController.navigate("output_screen/${output(list)}")
                     }
                 )
         }
