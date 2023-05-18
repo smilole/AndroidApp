@@ -296,6 +296,7 @@ fun splitString(str: String): List<String> {
     )
     var s = ""
     for (ch in str) {
+        if(ch==' ') continue
         if (ch in operators) {
             if (s != "") {
                 list.add(s)

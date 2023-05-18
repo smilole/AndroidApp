@@ -17,9 +17,10 @@ import com.example.myapplication.*
 
 @Composable
 fun MainScreen(navController:NavController) {
-    var list = listOf<Block>().toMutableStateList()
+    val list = mutableListOf<Block>().toMutableStateList()
     var markCount = 0
-    var currentMark = "m$markCount"
+    var currentMark = "m0"
+
 
     Column {
         Row(
@@ -75,14 +76,31 @@ fun MainScreen(navController:NavController) {
                     .padding(5.dp)
                     .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
                     .clickable {
-                        list.add(BlockIf(currentMark))
-                        list.add(BlockEnd(currentMark))
+                        val blockIf = BlockIf(currentMark)
+                        list.add(blockIf)
+                        list.add(BlockEnd(currentMark,blockIf))
                         markCount++
                         currentMark = "m$markCount"
-                               },
+                    },
                 contentAlignment = Alignment.Center
             ){
                 Text(text = "Условие")
+            }
+            Box(
+                modifier = Modifier
+                    .size(125.dp)
+                    .padding(5.dp)
+                    .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                    .clickable {
+                        val blockWhile = BlockWhile(currentMark)
+                        list.add(blockWhile)
+                        list.add(BlockEnd(currentMark,blockWhile))
+                        markCount++
+                        currentMark = "m$markCount"
+                    },
+                contentAlignment = Alignment.Center
+            ){
+                Text(text = "While")
             }
             Box(
                 modifier = Modifier

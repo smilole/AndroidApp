@@ -55,6 +55,7 @@ val LazyListItemInfo.offsetEnd: Int
 fun <T> MutableList<T>.move(from: Int, to: Int) {
     if (from == to)
         return
+    Log.d("moves", "$from $to")
 
     val element = this.removeAt(from) ?: return
     this.add(to, element)
@@ -127,7 +128,7 @@ fun BlockDeclaration(block:BlockDeclaration) {
             value = it
             block.value = it
                         },
-        placeholder = { Text("Введите переменные через запятую") },
+        placeholder = { Text("variable1,variable2") },
         shape = RoundedCornerShape(5.dp),
         singleLine = true,
         keyboardActions = KeyboardActions(onDone = {
@@ -142,6 +143,7 @@ fun BlockIf(block:BlockIf){
     value = block.value
     val focusManager = LocalFocusManager.current
     Row(verticalAlignment = Alignment.CenterVertically){
+        Text("If")
         OutlinedTextField(
             modifier = Modifier
                 .padding(5.dp)
@@ -152,6 +154,35 @@ fun BlockIf(block:BlockIf){
                 value = it
                 block.value = it
                             },
+            placeholder = { Text("Условие") },
+            shape = RoundedCornerShape(5.dp),
+            singleLine = true,
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.clearFocus()
+            })
+        )
+        Text(text=":")
+        Text(text="Begin ${block.mark}")
+    }
+}
+
+@Composable
+fun BlockWhile(block:BlockWhile){
+    var value by remember { mutableStateOf("") }
+    value = block.value
+    val focusManager = LocalFocusManager.current
+    Row(verticalAlignment = Alignment.CenterVertically){
+        Text("While")
+        OutlinedTextField(
+            modifier = Modifier
+                .padding(5.dp)
+                .fillMaxHeight()
+                .fillMaxWidth(0.8f),
+            value = value,
+            onValueChange = {
+                value = it
+                block.value = it
+            },
             placeholder = { Text("Условие") },
             shape = RoundedCornerShape(5.dp),
             singleLine = true,
@@ -210,6 +241,9 @@ fun output(items: MutableList<Block>):String{
             is BlockIf -> {
                 line+="?(${item.value}){"
             }
+            is BlockWhile -> {
+                line+="#(${item.value}){"
+            }
             is BlockEnd -> {
                 line+="}"
             }
@@ -218,7 +252,6 @@ fun output(items: MutableList<Block>):String{
             }
         }
     }
-
     Log.d("MyLog","line = $line")
 
     val polis = stringToPolis(line)
