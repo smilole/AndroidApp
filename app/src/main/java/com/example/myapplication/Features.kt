@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.lang.Math.random
 import java.sql.Blob
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -110,6 +111,60 @@ fun BlockInit(block:BlockInit){
             keyboardActions = KeyboardActions(onDone =  {
                 focusManager.clearFocus()
             })
+        )
+    }
+}
+
+
+@Composable
+fun BlockArrayDeclaration(block:BlockArrayDeclaration){
+    var firstValue by remember { mutableStateOf("") }
+    var secondValue by remember { mutableStateOf("") }
+    firstValue =  block.name
+    secondValue = block.size
+    val focusManager = LocalFocusManager.current
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        OutlinedTextField(
+            modifier = Modifier
+                .padding(5.dp)
+                .fillMaxHeight()
+                .fillMaxWidth(0.45f),
+            value=firstValue,
+            onValueChange = {
+                firstValue = it
+                block.name= it
+            },
+            placeholder = {Text("Название")},
+            shape = RoundedCornerShape(5.dp),
+            singleLine = true,
+            keyboardActions = KeyboardActions(onDone =  {
+                focusManager.clearFocus()
+            })
+        )
+        Text(
+            modifier = Modifier
+                .padding(horizontal = 5.dp),
+            text = "="
+        )
+        OutlinedTextField(
+            modifier = Modifier
+                .padding(5.dp)
+                .fillMaxHeight()
+                .fillMaxWidth(),
+            value=secondValue,
+            onValueChange = {
+                secondValue = it
+                block.size = it
+            },
+            placeholder = {Text("Размер")},
+            shape = RoundedCornerShape(5.dp),
+            singleLine = true,
+            keyboardActions = KeyboardActions(onDone =  {
+                focusManager.clearFocus()
+            }),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
     }
 }
@@ -235,7 +290,7 @@ fun output(items: MutableList<Block>):String{
             is BlockDeclaration -> {
                 val list = item.value.split(",")
                 for (variable in list){
-                    mapOfVariables.put(variable,0)
+                    mapOfVariables[variable] = 0
                 }
             }
             is BlockIf -> {
@@ -249,6 +304,13 @@ fun output(items: MutableList<Block>):String{
             }
             is BlockOutput -> {
                 line+="p(${item.value});"
+            }
+            is BlockArrayDeclaration -> {
+                val list = mutableListOf<String>()
+                for(i in 0 until item.size.toInt()){
+                    list.add((0..50).random().toString())
+                }
+                mapOfVariables[item.name] = list
             }
         }
     }

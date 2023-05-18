@@ -64,7 +64,7 @@ fun stringToPolis(str: String):List<String>{
     )
     /*
     val string =
-        "i=0;j=0;tm=0;#(i<size-1){#(j<size-i-1){?(arr[j+1]>arr[j]){tm=arr[j+1];arr[j+1]=arr[j];arr[j]=tm;}j=j+1;}j=0;i=i+1;};i=size-1;#(i>0|i~0){p(arr[i]);i=i-1}"
+        "i=0;j=0;t=0;#(i<size-1){#(j<size-i-1){?(arr[j+1]>arr[j]){t=arr[j+1];arr[j+1]=arr[j];arr[j]=t;}j=j+1;}j=0;i=i+1;};i=size-1;#(i>0|i~0){p(arr[i]);i=i-1}"
     */
     val operators = setOf(
         "+",

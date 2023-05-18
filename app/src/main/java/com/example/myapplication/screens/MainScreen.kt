@@ -113,6 +113,17 @@ fun MainScreen(navController:NavController) {
             ){
                 Text(text = "Вывод")
             }
+            Box(
+                modifier = Modifier
+                    .size(125.dp)
+                    .padding(5.dp)
+                    .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                    .clickable { list.add(BlockArrayDeclaration()) },
+                contentAlignment = Alignment.Center
+
+            ){
+                Text(text = "Массив")
+            }
         }
     }
 }
