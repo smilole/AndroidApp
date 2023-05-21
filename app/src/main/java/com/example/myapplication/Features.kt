@@ -251,6 +251,76 @@ fun BlockWhile(block:BlockWhile){
 }
 
 @Composable
+fun BlockFor(block:BlockFor){
+    var firstValue by remember { mutableStateOf("") }
+    var secondValue by remember { mutableStateOf("") }
+    var thirdValue by remember { mutableStateOf("") }
+    firstValue =  block.init
+    secondValue = block.condition
+    thirdValue = block.increment
+    val focusManager = LocalFocusManager.current
+    Row(verticalAlignment = Alignment.CenterVertically){
+        Text("For")
+        OutlinedTextField(
+            modifier = Modifier
+                .padding(5.dp)
+                .fillMaxHeight()
+                .width(60.dp)
+            ,
+            value = firstValue,
+            onValueChange = {
+                firstValue = it
+                block.init = it
+            },
+            placeholder = { Text("init") },
+            shape = RoundedCornerShape(5.dp),
+            singleLine = true,
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.clearFocus()
+            })
+        )
+        OutlinedTextField(
+            modifier = Modifier
+                .padding(5.dp)
+                .fillMaxHeight()
+                .width(100.dp)
+            ,
+            value = secondValue,
+            onValueChange = {
+                secondValue = it
+                block.condition = it
+            },
+            placeholder = { Text("condition") },
+            shape = RoundedCornerShape(5.dp),
+            singleLine = true,
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.clearFocus()
+            })
+        )
+        OutlinedTextField(
+            modifier = Modifier
+                .padding(5.dp)
+                .fillMaxHeight()
+                .width(70.dp)
+            ,
+            value = thirdValue,
+            onValueChange = {
+                thirdValue = it
+                block.increment = it
+            },
+            placeholder = { Text("i=i+1") },
+            shape = RoundedCornerShape(5.dp),
+            singleLine = true,
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.clearFocus()
+            })
+        )
+        Text(text=" {")
+        Text(text= block.mark)
+    }
+}
+
+@Composable
 fun BlockEnd(block:BlockEnd){
     Text(text = "End ${block.mark}")
 }
@@ -300,6 +370,8 @@ fun output(items: MutableList<Block>):String{
                 line+="#(${item.value}){"
             }
             is BlockEnd -> {
+                if (item.linkedBlock is BlockFor)
+                    line+="${item.linkedBlock.increment};"
                 line+="}"
             }
             is BlockOutput -> {
@@ -311,6 +383,9 @@ fun output(items: MutableList<Block>):String{
                     list.add((0..50).random().toString())
                 }
                 mapOfVariables[item.name] = list
+            }
+            is BlockFor -> {
+                line+="${item.init};#(${item.condition}){"
             }
         }
     }

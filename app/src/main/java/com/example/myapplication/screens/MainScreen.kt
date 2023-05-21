@@ -8,16 +8,21 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.myapplication.*
-
 @Composable
 fun MainScreen(navController:NavController) {
-    val list = mutableListOf<Block>().toMutableStateList()
+
+
+    val listViewModel: MainViewModel = viewModel()
+
+    //val list = mutableListOf<Block>().toMutableStateList()
     var markCount = 0
     var currentMark = "m0"
 
@@ -31,16 +36,19 @@ fun MainScreen(navController:NavController) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ){
-            Text(text = "Hello")
+            Text(text = "Hello",
+            modifier = Modifier.clickable {
+                listViewModel.list.clear()
+            })
             Text(text = "World",
                 modifier = Modifier.clickable {
-                    navController.navigate("output_screen/${output(list)}")
+                    navController.navigate("output_screen/${output( listViewModel.list)}")
                     }
                 )
         }
         ReorderableList(
-            items = list,
-            onMove = { fromIndex, toIndex -> list.move(fromIndex, toIndex) }
+            items =  listViewModel.list,
+            onMove = { fromIndex, toIndex ->  listViewModel.list.move(fromIndex, toIndex) }
         )
         Row(
             modifier = Modifier
@@ -54,7 +62,7 @@ fun MainScreen(navController:NavController) {
                     .size(125.dp)
                     .padding(5.dp)
                     .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
-                    .clickable { list.add(BlockDeclaration()) },
+                    .clickable {  listViewModel.list.add(BlockDeclaration()) },
                 contentAlignment = Alignment.Center
 
             ){
@@ -65,7 +73,7 @@ fun MainScreen(navController:NavController) {
                     .size(125.dp)
                     .padding(5.dp)
                     .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
-                    .clickable { list.add(BlockInit()) },
+                    .clickable {  listViewModel.list.add(BlockInit()) },
                 contentAlignment = Alignment.Center
             ){
                 Text(text = "Инициализация")
@@ -77,8 +85,8 @@ fun MainScreen(navController:NavController) {
                     .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
                     .clickable {
                         val blockIf = BlockIf(currentMark)
-                        list.add(blockIf)
-                        list.add(BlockEnd(currentMark,blockIf))
+                        listViewModel.list.add(blockIf)
+                        listViewModel.list.add(BlockEnd(currentMark,blockIf))
                         markCount++
                         currentMark = "m$markCount"
                     },
@@ -93,8 +101,8 @@ fun MainScreen(navController:NavController) {
                     .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
                     .clickable {
                         val blockWhile = BlockWhile(currentMark)
-                        list.add(blockWhile)
-                        list.add(BlockEnd(currentMark,blockWhile))
+                        listViewModel.list.add(blockWhile)
+                        listViewModel.list.add(BlockEnd(currentMark,blockWhile))
                         markCount++
                         currentMark = "m$markCount"
                     },
@@ -107,7 +115,23 @@ fun MainScreen(navController:NavController) {
                     .size(125.dp)
                     .padding(5.dp)
                     .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
-                    .clickable { list.add(BlockOutput()) },
+                    .clickable {
+                        val blockFor = BlockFor(currentMark)
+                        listViewModel.list.add(blockFor)
+                        listViewModel.list.add(BlockEnd(currentMark,blockFor))
+                        markCount++
+                        currentMark = "m$markCount"
+                    },
+                contentAlignment = Alignment.Center
+            ){
+                Text(text = "For")
+            }
+            Box(
+                modifier = Modifier
+                    .size(125.dp)
+                    .padding(5.dp)
+                    .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                    .clickable {  listViewModel.list.add(BlockOutput()) },
                 contentAlignment = Alignment.Center
 
             ){
@@ -118,7 +142,7 @@ fun MainScreen(navController:NavController) {
                     .size(125.dp)
                     .padding(5.dp)
                     .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
-                    .clickable { list.add(BlockArrayDeclaration()) },
+                    .clickable {  listViewModel.list.add(BlockArrayDeclaration()) },
                 contentAlignment = Alignment.Center
 
             ){

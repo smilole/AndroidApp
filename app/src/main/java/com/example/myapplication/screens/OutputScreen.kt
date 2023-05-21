@@ -59,9 +59,11 @@ fun OutputScreen(navController: NavController,output:String){
                 Image(
                     painter = painterResource(id = R.drawable.back_arrow),
                     contentDescription = "backArrow",
-                    modifier = Modifier.size(30.dp).clickable {
-                        navController.navigate("main_screen")
-                    }
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable {
+                            navController.navigate("main_screen")
+                        }
                 )
                 Text(
                     "Output",
