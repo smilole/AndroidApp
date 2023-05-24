@@ -3,6 +3,7 @@ package com.example.myapplication
 import android.content.Context
 import android.util.DisplayMetrics
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
@@ -28,8 +29,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -146,7 +149,7 @@ fun BlockArrayDeclaration(block:BlockArrayDeclaration){
         Text(
             modifier = Modifier
                 .padding(horizontal = 5.dp),
-            text = "="
+            text = "size:"
         )
         OutlinedTextField(
             modifier = Modifier
@@ -259,14 +262,14 @@ fun BlockFor(block:BlockFor){
     secondValue = block.condition
     thirdValue = block.increment
     val focusManager = LocalFocusManager.current
-    Row(verticalAlignment = Alignment.CenterVertically){
+    Column(Modifier.padding(end = 20.dp)) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         Text("For")
         OutlinedTextField(
             modifier = Modifier
                 .padding(5.dp)
                 .fillMaxHeight()
-                .width(60.dp)
-            ,
+                .weight(0.5f),
             value = firstValue,
             onValueChange = {
                 firstValue = it
@@ -279,12 +282,12 @@ fun BlockFor(block:BlockFor){
                 focusManager.clearFocus()
             })
         )
+        Text(";")
         OutlinedTextField(
             modifier = Modifier
                 .padding(5.dp)
                 .fillMaxHeight()
-                .width(100.dp)
-            ,
+                .weight(1f),
             value = secondValue,
             onValueChange = {
                 secondValue = it
@@ -297,26 +300,30 @@ fun BlockFor(block:BlockFor){
                 focusManager.clearFocus()
             })
         )
-        OutlinedTextField(
-            modifier = Modifier
-                .padding(5.dp)
-                .fillMaxHeight()
-                .width(70.dp)
-            ,
-            value = thirdValue,
-            onValueChange = {
-                thirdValue = it
-                block.increment = it
-            },
-            placeholder = { Text("i=i+1") },
-            shape = RoundedCornerShape(5.dp),
-            singleLine = true,
-            keyboardActions = KeyboardActions(onDone = {
-                focusManager.clearFocus()
-            })
-        )
-        Text(text=" {")
-        Text(text= block.mark)
+        Text(";")
+    }
+        Row(verticalAlignment = Alignment.CenterVertically
+
+        ) {
+            OutlinedTextField(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .fillMaxHeight()
+                    .width(70.dp),
+                value = thirdValue,
+                onValueChange = {
+                    thirdValue = it
+                    block.increment = it
+                },
+                placeholder = { Text("i=i+1") },
+                shape = RoundedCornerShape(5.dp),
+                singleLine = true,
+                keyboardActions = KeyboardActions(onDone = {
+                    focusManager.clearFocus()
+                })
+            )
+            Text(text = "Begin ${block.mark}")
+        }
     }
 }
 
@@ -326,19 +333,22 @@ fun BlockEnd(block:BlockEnd){
 }
 
 @Composable
-fun BlockOutput(block:BlockOutput){
+fun BlockOutput(block:BlockOutput) {
     var value by remember { mutableStateOf(block.value) }
     value = block.value
     val focusManager = LocalFocusManager.current
+    Row(verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.SpaceBetween) {
     OutlinedTextField(
         modifier = Modifier
             .padding(5.dp)
-            .fillMaxSize(),
+            .weight(1f)
+            ,
         value = value,
         onValueChange = {
             value = it
             block.value = it
-                        },
+        },
         placeholder = { Text("Вывод") },
         shape = RoundedCornerShape(5.dp),
         singleLine = true,
@@ -346,6 +356,15 @@ fun BlockOutput(block:BlockOutput){
             focusManager.clearFocus()
         })
     )
+        Image(
+            painterResource(id = R.drawable.print),
+            contentDescription = "print",
+            modifier = Modifier
+                .size(30.dp)
+
+        )
+
+}
 }
 
 fun output(items: MutableList<Block>):String{
@@ -367,6 +386,7 @@ fun output(items: MutableList<Block>):String{
                 line+="?(${item.value}){"
             }
             is BlockWhile -> {
+                if(item.value!="")
                 line+="#(${item.value}){"
             }
             is BlockEnd -> {
@@ -378,24 +398,33 @@ fun output(items: MutableList<Block>):String{
                 line+="p(${item.value});"
             }
             is BlockArrayDeclaration -> {
-                val list = mutableListOf<String>()
-                for(i in 0 until item.size.toInt()){
-                    list.add((0..50).random().toString())
+                if(item.name.isNotEmpty() && item.size.isNotEmpty()) {
+                    val list = mutableListOf<String>()
+                    for (i in 0 until item.size.toInt()) {
+                        list.add((0..50).random().toString())
+                    }
+                    mapOfVariables[item.name] = list
                 }
-                mapOfVariables[item.name] = list
             }
             is BlockFor -> {
+                if(item.condition!="")
                 line+="${item.init};#(${item.condition}){"
             }
         }
     }
     Log.d("MyLog","line = $line")
+    var out = ""
+    try {
+        val polis = stringToPolis(line)
+        translation(polis, out = outputList, variables = mapOfVariables)
+        "Программа выполнена успешно\n\n"
+        for(i in outputList)
+            out+="$i "
+    }
+    catch (e:Exception){
+        out ="error"
+    }
 
-    val polis = stringToPolis(line)
-    translation(polis,out = outputList, variables = mapOfVariables)
 
-    var out = "Программа выполнена успешно\n\n"
-    for(i in outputList)
-        out+="$i "
     return out
 }

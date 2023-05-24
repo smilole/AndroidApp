@@ -80,6 +80,15 @@ fun OutputScreen(navController: NavController,output:String){
                     .fillMaxWidth()
                     .background(color = colorResource(id = R.color.pink_500))
                 ) {
+                Image(
+                painterResource(id = R.drawable.blesk),
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .align(Alignment.BottomEnd),
+                contentDescription = "blesk",
+                contentScale = ContentScale.Crop
+                //modifier = Modifier.
+            )
                 Text(
                     output,
                     Modifier.padding(20.dp),
@@ -88,15 +97,7 @@ fun OutputScreen(navController: NavController,output:String){
                     fontSize = 20.sp
                 ),
                 )
-                Image(
-                    painterResource(id = R.drawable.blesk),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter),
-                    contentDescription = "blesk",
-                    contentScale = ContentScale.Crop
-                    //modifier = Modifier.
-                )
+
 
             }
             Row(
