@@ -361,10 +361,18 @@ fun BlockOutput(block:BlockOutput) {
             contentDescription = "print",
             modifier = Modifier
                 .size(30.dp)
-
         )
-
+    }
 }
+
+@Composable
+fun BlockElse(block:BlockElse){
+    val focusManager = LocalFocusManager.current
+    Row(verticalAlignment = Alignment.CenterVertically){
+        Text("Else")
+        Text(text=":")
+        Text(text="Begin ${block.mark}")
+    }
 }
 
 fun output(items: MutableList<Block>):String{
@@ -409,6 +417,9 @@ fun output(items: MutableList<Block>):String{
             is BlockFor -> {
                 if(item.condition!="")
                 line+="${item.init};#(${item.condition}){"
+            }
+            is BlockElse -> {
+                line+="!{"
             }
         }
     }

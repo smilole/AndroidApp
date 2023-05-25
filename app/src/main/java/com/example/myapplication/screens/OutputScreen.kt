@@ -125,7 +125,7 @@ fun OutputScreen(navController: NavController,output:String){
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .width(80.dp)
-                .padding(end = 20.dp, bottom = 40.dp)
+                .padding(end = 20.dp, bottom = 400.dp)
         )
     }
 

@@ -243,6 +243,31 @@ fun MainScreen(navController: NavController) {
                     )
                     Text(text = "Массив")
                 }
+
+                Box(
+                    modifier = Modifier
+                        .size(125.dp)
+                        .padding(5.dp)
+                        .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                        .clickable {
+                            val blockElse = BlockElse(currentMark)
+                            listViewModel.list.add(blockElse)
+                            listViewModel.list.add(BlockEnd(currentMark, blockElse))
+                            markCount++
+                            currentMark = "m$markCount"
+                        },
+                    contentAlignment = Alignment.Center
+
+                ) {
+                    Image(
+                        painterResource(id = R.drawable.block_cats),
+                        contentDescription = "walkingCat",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                    )
+                    Text(text = "Else")
+                }
             }
         }
 

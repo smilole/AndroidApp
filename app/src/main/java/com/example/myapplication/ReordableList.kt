@@ -114,6 +114,7 @@ fun ReorderableList(
                         is BlockWhile -> BlockWhile(item)
                         is BlockArrayDeclaration -> BlockArrayDeclaration(item)
                         is BlockFor -> BlockFor(item)
+                        is BlockElse -> BlockElse(item)
                     }
                 }
             }
