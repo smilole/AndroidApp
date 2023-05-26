@@ -428,12 +428,12 @@ fun output(items: MutableList<Block>):String{
     try {
         val polis = stringToPolis(line)
         translation(polis, out = outputList, variables = mapOfVariables)
-        "Программа выполнена успешно\n\n"
+        out+="Программа выполнена успешно\n\n"
         for(i in outputList)
             out+="$i "
     }
     catch (e:Exception){
-        out ="error"
+        out = "error"
     }
 
 
