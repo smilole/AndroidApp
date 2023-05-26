@@ -1,71 +1,116 @@
 package com.example.myapplication.screens
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.material.TextFieldColors
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.myapplication.*
 import com.example.myapplication.R
+import io.paperdb.Paper
 
 @Composable
 fun MainScreen(navController: NavController) {
 
-
     val context = LocalContext.current
-    val listViewModel: MainViewModel = viewModel()
-
+    val mainViewModel: MainViewModel = viewModel()
     //val list = mutableListOf<Block>().toMutableStateList()
     var markCount = 0
     var currentMark = "m0"
+    Paper.init(context)
 
     Box() {
-
         Column {
             Row(
                 Modifier
                     .fillMaxWidth()
                     .height(60.dp)
                     .background(color = colorResource(id = R.color.pink_200))
-                    .padding(start = 20.dp),
+                    .padding(start = 20.dp, end = 20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "CatBlock",
+                Text(
+                    text = "CatBlock",
                     modifier = Modifier.clickable {
-                        listViewModel.list.clear()
-                    })
-                Row(Modifier
-                    .clickable {
-                        val out = output(listViewModel.list)
-                        if (out == "error") {
-                            Toast.makeText(context, "Что-то не так", Toast.LENGTH_LONG).show()
-                        } else
-                            navController.navigate("output_screen/$out")
-                    }, verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "Run")
+                        mainViewModel.list.clear()
+                    },
+                    style = TextStyle(
+                        fontFamily = FontFamily(Font(R.font.consolas)), fontWeight = FontWeight.Bold
+                    ),
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    Image(painter = painterResource(id = R.drawable.save_icon),
+                        contentDescription = "runButton",
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clickable {
+                                mainViewModel.saveDialogIsOpen = true
+                            })/*
                     Image(
                         painter = painterResource(id = R.drawable.run_button),
                         contentDescription = "runButton",
                         modifier = Modifier
                             .size(30.dp)
+                            .clickable {
+                                Paper.init(context)
+                                listViewModel.list.clear()
+                                Paper.book().read("program", listOf<Block>())
+                                    ?.let { listViewModel.list.addAll(it) }
+                            }
+
                     )
+                     */
+                    Image(painter = painterResource(id = R.drawable.run_button),
+                        contentDescription = "runButton",
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clickable {
+                                Paper
+                                    .book()
+                                    .write(mainViewModel.programName, mainViewModel.list)
+                                val out = output(mainViewModel.list)
+                                if (out == "error") {
+                                    Toast
+                                        .makeText(context, "Что-то не так", Toast.LENGTH_LONG)
+                                        .show()
+                                } else navController.navigate("output_screen/$out")
+                            })
                 }
             }
             Box(
@@ -83,10 +128,8 @@ fun MainScreen(navController: NavController) {
                     contentScale = ContentScale.Crop
                     //modifier = Modifier.
                 )
-                ReorderableList(
-                    items = listViewModel.list,
-                    onMove = { fromIndex, toIndex -> listViewModel.list.move(fromIndex, toIndex) }
-                )
+                ReorderableList(items = mainViewModel.list,
+                    onMove = { fromIndex, toIndex -> mainViewModel.list.move(fromIndex, toIndex) })
 
             }
             Row(
@@ -101,7 +144,7 @@ fun MainScreen(navController: NavController) {
                         .size(125.dp)
                         .padding(5.dp)
                         .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
-                        .clickable { listViewModel.list.add(BlockDeclaration()) },
+                        .clickable { mainViewModel.list.add(BlockDeclaration()) },
                     contentAlignment = Alignment.Center
 
                 ) {
@@ -109,29 +152,39 @@ fun MainScreen(navController: NavController) {
                         painterResource(id = R.drawable.block_cats),
                         contentDescription = "walkingCat",
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
+                        modifier = Modifier.align(Alignment.BottomCenter)
 
                     )
-                    Text(text = "Объявление")
+                    Text(
+                        text = "Объявление",
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.consolas)),
+                            fontWeight = FontWeight.Bold
+                        ),
+                    )
                 }
                 Box(
                     modifier = Modifier
                         .size(125.dp)
                         .padding(5.dp)
                         .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
-                        .clickable { listViewModel.list.add(BlockInit()) },
+                        .clickable { mainViewModel.list.add(BlockInit()) },
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
                         painterResource(id = R.drawable.block_cats),
                         contentDescription = "walkingCat",
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
+                        modifier = Modifier.align(Alignment.BottomCenter)
 
                     )
-                    Text(text = "Инициализация")
+                    Text(
+                        text = "Инициализация",
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.consolas)),
+                            fontWeight = FontWeight.Bold
+                        ),
+                    )
                 }
                 Box(
                     modifier = Modifier
@@ -140,22 +193,26 @@ fun MainScreen(navController: NavController) {
                         .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
                         .clickable {
                             val blockIf = BlockIf(currentMark)
-                            listViewModel.list.add(blockIf)
-                            listViewModel.list.add(BlockEnd(currentMark, blockIf))
+                            mainViewModel.list.add(blockIf)
+                            mainViewModel.list.add(BlockEnd(currentMark, blockIf))
                             markCount++
                             currentMark = "m$markCount"
-                        },
-                    contentAlignment = Alignment.Center
+                        }, contentAlignment = Alignment.Center
                 ) {
                     Image(
                         painterResource(id = R.drawable.block_cats),
                         contentDescription = "walkingCat",
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
+                        modifier = Modifier.align(Alignment.BottomCenter)
 
                     )
-                    Text(text = "Условие")
+                    Text(
+                        text = "Условие",
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.consolas)),
+                            fontWeight = FontWeight.Bold
+                        ),
+                    )
                 }
                 Box(
                     modifier = Modifier
@@ -164,22 +221,26 @@ fun MainScreen(navController: NavController) {
                         .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
                         .clickable {
                             val blockWhile = BlockWhile(currentMark)
-                            listViewModel.list.add(blockWhile)
-                            listViewModel.list.add(BlockEnd(currentMark, blockWhile))
+                            mainViewModel.list.add(blockWhile)
+                            mainViewModel.list.add(BlockEnd(currentMark, blockWhile))
                             markCount++
                             currentMark = "m$markCount"
-                        },
-                    contentAlignment = Alignment.Center
+                        }, contentAlignment = Alignment.Center
                 ) {
                     Image(
                         painterResource(id = R.drawable.block_cats),
                         contentDescription = "walkingCat",
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
+                        modifier = Modifier.align(Alignment.BottomCenter)
 
                     )
-                    Text(text = "While")
+                    Text(
+                        text = "While",
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.consolas)),
+                            fontWeight = FontWeight.Bold
+                        ),
+                    )
                 }
                 Box(
                     modifier = Modifier
@@ -188,29 +249,33 @@ fun MainScreen(navController: NavController) {
                         .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
                         .clickable {
                             val blockFor = BlockFor(currentMark)
-                            listViewModel.list.add(blockFor)
-                            listViewModel.list.add(BlockEnd(currentMark, blockFor))
+                            mainViewModel.list.add(blockFor)
+                            mainViewModel.list.add(BlockEnd(currentMark, blockFor))
                             markCount++
                             currentMark = "m$markCount"
-                        },
-                    contentAlignment = Alignment.Center
+                        }, contentAlignment = Alignment.Center
                 ) {
                     Image(
                         painterResource(id = R.drawable.block_cats),
                         contentDescription = "walkingCat",
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
+                        modifier = Modifier.align(Alignment.BottomCenter)
 
                     )
-                    Text(text = "For")
+                    Text(
+                        text = "For",
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.consolas)),
+                            fontWeight = FontWeight.Bold
+                        ),
+                    )
                 }
                 Box(
                     modifier = Modifier
                         .size(125.dp)
                         .padding(5.dp)
                         .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
-                        .clickable { listViewModel.list.add(BlockOutput()) },
+                        .clickable { mainViewModel.list.add(BlockOutput()) },
                     contentAlignment = Alignment.Center
 
                 ) {
@@ -218,18 +283,23 @@ fun MainScreen(navController: NavController) {
                         painterResource(id = R.drawable.block_cats),
                         contentDescription = "walkingCat",
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
+                        modifier = Modifier.align(Alignment.BottomCenter)
 
                     )
-                    Text(text = "Вывод")
+                    Text(
+                        text = "Вывод",
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.consolas)),
+                            fontWeight = FontWeight.Bold
+                        ),
+                    )
                 }
                 Box(
                     modifier = Modifier
                         .size(125.dp)
                         .padding(5.dp)
                         .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
-                        .clickable { listViewModel.list.add(BlockArrayDeclaration()) },
+                        .clickable { mainViewModel.list.add(BlockArrayDeclaration()) },
                     contentAlignment = Alignment.Center
 
                 ) {
@@ -237,11 +307,16 @@ fun MainScreen(navController: NavController) {
                         painterResource(id = R.drawable.block_cats),
                         contentDescription = "walkingCat",
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
+                        modifier = Modifier.align(Alignment.BottomCenter)
 
                     )
-                    Text(text = "Массив")
+                    Text(
+                        text = "Массив",
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.consolas)),
+                            fontWeight = FontWeight.Bold
+                        ),
+                    )
                 }
 
                 Box(
@@ -251,22 +326,26 @@ fun MainScreen(navController: NavController) {
                         .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
                         .clickable {
                             val blockElse = BlockElse(currentMark)
-                            listViewModel.list.add(blockElse)
-                            listViewModel.list.add(BlockEnd(currentMark, blockElse))
+                            mainViewModel.list.add(blockElse)
+                            mainViewModel.list.add(BlockEnd(currentMark, blockElse))
                             markCount++
                             currentMark = "m$markCount"
-                        },
-                    contentAlignment = Alignment.Center
+                        }, contentAlignment = Alignment.Center
 
                 ) {
                     Image(
                         painterResource(id = R.drawable.block_cats),
                         contentDescription = "walkingCat",
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
+                        modifier = Modifier.align(Alignment.BottomCenter)
                     )
-                    Text(text = "Else")
+                    Text(
+                        text = "Else",
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.consolas)),
+                            fontWeight = FontWeight.Bold
+                        ),
+                    )
                 }
             }
         }
@@ -281,6 +360,144 @@ fun MainScreen(navController: NavController) {
                 .padding(end = 20.dp, bottom = 120.dp)
         )
 
-    }
+        if (mainViewModel.saveDialogIsOpen) Box(Modifier.align(Alignment.Center)) {
+            SaveDialog(programName = mainViewModel.programName,
+                onProgramNameChanged = { mainViewModel.programName = it },
+                onSaveButtonClicked = {
+                    Paper.book().write(mainViewModel.programName, mainViewModel.list)
+                    mainViewModel.saveDialogIsOpen = false
+                })
+        }
+        if (!mainViewModel.fileIsChosen) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(color = colorResource(id = R.color.pink_500))
+            ) {
+                Column(
+                    Modifier
+                        .padding(20.dp)
+                        .fillMaxSize()
+                        .background(Color.White, RoundedCornerShape(4.dp))
+                        .border(BorderStroke(1.dp, Color.Black), RoundedCornerShape(4.dp)),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painterResource(id = R.drawable.create_icon),
+                        contentDescription = "createIcon"
+                    )
+                    OutlinedButton(
+                        colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.pink_500)),
+                        onClick = {
+                            mainViewModel.fileIsChosen = true
+                            mainViewModel.saveDialogIsOpen = true
+                        },
+                        border = BorderStroke(1.dp, Color.Black)
+                    ) {
+                        Text("Создать файл")
+                    }
+                    Text(
+                        "или",
+                        style = TextStyle
+                            (
+                            fontFamily = FontFamily(Font(R.font.consolas))
+                        ),
+                    )
+                    Text(
+                        "Открыть имеющийся:\n",
+                        style = TextStyle
+                            (
+                            fontFamily = FontFamily(Font(R.font.consolas)),
+                        ),
+                    )
 
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        val programs = Paper.book().allKeys
+                        if (programs.isEmpty()) {
+                            Text("Сохраненных программ еще нет", color = Color.Gray)
+                        } else {
+                            for (i in programs) Row(
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.width(200.dp)
+                            ) {
+                                Text(
+                                    i,
+                                    modifier = Modifier
+                                        .background(
+                                            color = colorResource(id = R.color.pink_200),
+                                            shape = RoundedCornerShape(4.dp)
+                                        )
+                                        .clickable {
+                                            mainViewModel.programName = i
+                                            mainViewModel.list.clear()
+                                            Paper
+                                                .book()
+                                                .read(i, listOf<Block>())
+                                                ?.let { mainViewModel.list.addAll(it) }
+                                            mainViewModel.fileIsChosen = true
+                                        }
+                                        .padding(10.dp),
+                                    style = TextStyle
+                                        (
+                                        fontFamily = FontFamily(Font(R.font.consolas)),
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                )
+                                Image(Icons.Default.Delete,
+                                    contentDescription = "delete",
+                                    modifier = Modifier.clickable {
+                                        Paper.book().delete(i)
+                                        mainViewModel.saveDialogIsOpen =
+                                            !mainViewModel.saveDialogIsOpen
+                                    })
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun SaveDialog(
+    modifier: Modifier = Modifier,
+    programName: String,
+    onProgramNameChanged: (String) -> Unit,
+    onSaveButtonClicked: () -> Unit
+) {
+    val focusManager = LocalFocusManager.current
+    Column(
+        modifier = modifier
+            .background(Color.White, RoundedCornerShape(4.dp))
+            .border(BorderStroke(1.dp, Color.Black), shape = RoundedCornerShape(4.dp))
+            .padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Text("Сохранение", style = TextStyle
+            (
+            fontFamily = FontFamily(Font(R.font.consolas)),
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp
+        ),)
+        OutlinedTextField(
+            value = programName,
+            onValueChange = onProgramNameChanged,
+            placeholder = { Text("Название программы") },
+            singleLine = true,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = colorResource(id = R.color.pink_200)
+            ),
+            keyboardActions = KeyboardActions(onDone = {
+               focusManager.clearFocus()
+            })
+        )
+        Button(onClick = onSaveButtonClicked,
+        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.pink_200))) {
+            Text("ОК")
+        }
+    }
 }

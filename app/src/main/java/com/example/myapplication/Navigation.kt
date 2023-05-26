@@ -9,15 +9,18 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.myapplication.screens.MainScreen
 import com.example.myapplication.screens.OutputScreen
+import com.example.myapplication.screens.StartScreen
 
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screen.MainScreen.route) {
+    NavHost(navController = navController, startDestination = Screen.StartScreen.route) {
         composable(Screen.MainScreen.route) {
             MainScreen(navController = navController)
         }
-
+        composable(Screen.StartScreen.route) {
+            StartScreen(navController = navController)
+        }
         composable("${Screen.OutputScreen.route}/{out}",
             arguments = listOf(
                 navArgument("out"){type = NavType.StringType}

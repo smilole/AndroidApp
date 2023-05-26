@@ -1,5 +1,7 @@
 package com.example.myapplication
 
+import java.security.InvalidKeyException
+
 fun stringToPolis(str: String):List<String>{
 
     val polis = mutableListOf<String>()
@@ -417,7 +419,9 @@ fun translation(
                     val arr = variables[arrayPattern.groupValues[1]] as MutableList<String>
                     arr[arrayPattern.groupValues[2].toInt()] = a
                 } else {
+                    if(variables.containsKey(b))
                     variables[b] = a
+                    else throw Exception("variable doesn't exist")
                 }
                 stack.push(a)
             }

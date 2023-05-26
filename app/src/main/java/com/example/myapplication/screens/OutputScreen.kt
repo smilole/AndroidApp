@@ -119,13 +119,12 @@ fun OutputScreen(navController: NavController,output:String){
             }
         }
         Image(
-            painterResource(id = R.drawable.walking_cat),
-            contentDescription = "walkingCat",
-            contentScale = ContentScale.Crop,
+            painterResource(id = R.drawable.cat_output),
+            contentDescription = "cat_output",
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .width(80.dp)
-                .padding(end = 20.dp, bottom = 400.dp)
+                .size(100.dp)
+                .padding(end = 20.dp, bottom = 40.dp)
         )
     }
 
