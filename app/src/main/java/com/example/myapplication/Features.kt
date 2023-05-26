@@ -506,6 +506,7 @@ fun output(items: MutableList<Block>): String {
             else
                 "$i "
     } catch (e: Exception) {
+        throw e
         out = "error"
     }
 
