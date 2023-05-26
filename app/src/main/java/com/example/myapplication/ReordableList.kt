@@ -90,7 +90,7 @@ fun ReorderableList(
                                 translationY = offsetOrNull ?: 0f
                             }
                     }
-                    .padding(top =20.dp, start = 20.dp,end = 20.dp)
+                    .padding(top = 20.dp, start = 20.dp, end = 20.dp)
                     //.height(70.dp)
                     .background(Color.White, shape = RoundedCornerShape(4.dp))
                     .border(1.dp, color = Color.Black, shape = RoundedCornerShape(4.dp))
@@ -115,6 +115,7 @@ fun ReorderableList(
                         is BlockArrayDeclaration -> BlockArrayDeclaration(item)
                         is BlockFor -> BlockFor(item)
                         is BlockElse -> BlockElse(item)
+                        is BlockArrayOfArrayDeclaration -> BlockArrayOfArrayDeclaration(item)
                     }
                 }
             }

@@ -1,5 +1,5 @@
 package com.example.myapplication
 
-class BlockDeclaration() : Block() {
+class BlockDeclaration : Block() {
     var value = ""
 }

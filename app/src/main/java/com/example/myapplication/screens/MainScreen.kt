@@ -16,7 +16,6 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextFieldColors
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -51,7 +50,7 @@ fun MainScreen(navController: NavController) {
     var currentMark = "m0"
     Paper.init(context)
 
-    Box() {
+    Box {
         Column {
             Row(
                 Modifier
@@ -75,27 +74,23 @@ fun MainScreen(navController: NavController) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
+                    Image(painter = painterResource(id = R.drawable.menu_icon),
+                        contentDescription = "menuButton",
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clickable {
+                                Paper
+                                    .book()
+                                    .write(mainViewModel.programName, mainViewModel.list)
+                                mainViewModel.fileIsChosen = false
+                            })
                     Image(painter = painterResource(id = R.drawable.save_icon),
-                        contentDescription = "runButton",
+                        contentDescription = "saveButton",
                         modifier = Modifier
                             .size(30.dp)
                             .clickable {
                                 mainViewModel.saveDialogIsOpen = true
-                            })/*
-                    Image(
-                        painter = painterResource(id = R.drawable.run_button),
-                        contentDescription = "runButton",
-                        modifier = Modifier
-                            .size(30.dp)
-                            .clickable {
-                                Paper.init(context)
-                                listViewModel.list.clear()
-                                Paper.book().read("program", listOf<Block>())
-                                    ?.let { listViewModel.list.addAll(it) }
-                            }
-
-                    )
-                     */
+                            })
                     Image(painter = painterResource(id = R.drawable.run_button),
                         contentDescription = "runButton",
                         modifier = Modifier
@@ -318,6 +313,30 @@ fun MainScreen(navController: NavController) {
                         ),
                     )
                 }
+                Box(
+                    modifier = Modifier
+                        .size(125.dp)
+                        .padding(5.dp)
+                        .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                        .clickable { mainViewModel.list.add(BlockArrayOfArrayDeclaration()) },
+                    contentAlignment = Alignment.Center
+
+                ) {
+                    Image(
+                        painterResource(id = R.drawable.block_cats),
+                        contentDescription = "walkingCat",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.align(Alignment.BottomCenter)
+
+                    )
+                    Text(
+                        text = "Двумерный массив",
+                        style = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.consolas)),
+                            fontWeight = FontWeight.Bold
+                        ),
+                    )
+                }
 
                 Box(
                     modifier = Modifier
@@ -477,12 +496,15 @@ fun SaveDialog(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        Text("Сохранение", style = TextStyle
-            (
-            fontFamily = FontFamily(Font(R.font.consolas)),
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp
-        ),)
+        Text(
+            "Сохранение",
+            style = TextStyle
+                (
+                fontFamily = FontFamily(Font(R.font.consolas)),
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            ),
+        )
         OutlinedTextField(
             value = programName,
             onValueChange = onProgramNameChanged,
@@ -492,11 +514,13 @@ fun SaveDialog(
                 focusedBorderColor = colorResource(id = R.color.pink_200)
             ),
             keyboardActions = KeyboardActions(onDone = {
-               focusManager.clearFocus()
+                focusManager.clearFocus()
             })
         )
-        Button(onClick = onSaveButtonClicked,
-        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.pink_200))) {
+        Button(
+            onClick = onSaveButtonClicked,
+            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.pink_200))
+        ) {
             Text("ОК")
         }
     }

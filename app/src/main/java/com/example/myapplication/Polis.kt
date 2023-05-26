@@ -1,8 +1,6 @@
 package com.example.myapplication
 
-import java.security.InvalidKeyException
-
-fun stringToPolis(str: String):List<String>{
+fun stringToPolis(str: String): List<String> {
 
     val polis = mutableListOf<String>()
     val operations = Stack()
@@ -298,7 +296,7 @@ fun splitString(str: String): List<String> {
     )
     var s = ""
     for (ch in str) {
-        if(ch==' ') continue
+        if (ch == ' ') continue
         if (ch in operators) {
             if (s != "") {
                 list.add(s)
@@ -347,6 +345,12 @@ fun translation(
             var count = polis[i][0].code - 48
             while (count > 0) {
                 var a = stack.pop()
+                var arrayOfArrayPattern = arrayOfArrayReg.find(a)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    a =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
                 val arrayPattern = arrayReg.find(a)
                 if (arrayPattern != null) {
                     val arr = variables[arrayPattern.groupValues[1]] as List<String>
@@ -390,6 +394,19 @@ fun translation(
                 var a = stack.pop()
                 var b = stack.pop()
 
+
+                var arrayOfArrayPattern = arrayOfArrayReg.find(a)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    a =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
+                arrayOfArrayPattern = arrayReg.find(b)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    b =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
                 var arrayPattern = arrayReg.find(a)
                 if (arrayPattern != null) {
                     val arr = variables[arrayPattern.groupValues[1]] as List<String>
@@ -408,19 +425,32 @@ fun translation(
             "=" -> {
                 var a = stack.pop()
                 val b = stack.pop()
+                var arrayOfArrayPattern = arrayOfArrayReg.find(a)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    a =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
                 var arrayPattern = arrayReg.find(a)
                 if (arrayPattern != null) {
                     val arr = variables[arrayPattern.groupValues[1]] as List<String>
                     a = arr[arrayPattern.groupValues[2].toInt()]
                 }
                 if (variables.containsKey(a)) a = variables[a].toString()
+                arrayOfArrayPattern = arrayReg.find(b)
+                if (arrayOfArrayPattern != null) {
+                    val arr =
+                        variables[arrayOfArrayPattern.groupValues[1]] as List<MutableList<String>>
+                    arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()] =
+                        a
+                }
                 arrayPattern = arrayReg.find(b)
                 if (arrayPattern != null) {
                     val arr = variables[arrayPattern.groupValues[1]] as MutableList<String>
                     arr[arrayPattern.groupValues[2].toInt()] = a
                 } else {
-                    if(variables.containsKey(b))
-                    variables[b] = a
+                    if (variables.containsKey(b))
+                        variables[b] = a
                     else throw Exception("variable doesn't exist")
                 }
                 stack.push(a)
@@ -429,6 +459,18 @@ fun translation(
             "-" -> {
                 var a = stack.pop()
                 var b = stack.pop()
+                var arrayOfArrayPattern = arrayOfArrayReg.find(a)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    a =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
+                arrayOfArrayPattern = arrayReg.find(b)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    b =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
                 var arrayPattern = arrayReg.find(a)
                 if (arrayPattern != null) {
                     val arr = variables[arrayPattern.groupValues[1]] as List<String>
@@ -447,6 +489,18 @@ fun translation(
             "*" -> {
                 var a = stack.pop()
                 var b = stack.pop()
+                var arrayOfArrayPattern = arrayOfArrayReg.find(a)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    a =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
+                arrayOfArrayPattern = arrayReg.find(b)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    b =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
                 var arrayPattern = arrayReg.find(a)
                 if (arrayPattern != null) {
                     val arr = variables[arrayPattern.groupValues[1]] as List<String>
@@ -465,6 +519,18 @@ fun translation(
             "/" -> {
                 var a = stack.pop()
                 var b = stack.pop()
+                var arrayOfArrayPattern = arrayOfArrayReg.find(a)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    a =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
+                arrayOfArrayPattern = arrayReg.find(b)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    b =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
                 var arrayPattern = arrayReg.find(a)
                 if (arrayPattern != null) {
                     val arr = variables[arrayPattern.groupValues[1]] as List<String>
@@ -483,6 +549,18 @@ fun translation(
             "%" -> {
                 var a = stack.pop()
                 var b = stack.pop()
+                var arrayOfArrayPattern = arrayOfArrayReg.find(a)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    a =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
+                arrayOfArrayPattern = arrayReg.find(b)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    b =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
                 var arrayPattern = arrayReg.find(a)
                 if (arrayPattern != null) {
                     val arr = variables[arrayPattern.groupValues[1]] as List<String>
@@ -501,6 +579,18 @@ fun translation(
             ">" -> {
                 var a = stack.pop()
                 var b = stack.pop()
+                var arrayOfArrayPattern = arrayOfArrayReg.find(a)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    a =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
+                arrayOfArrayPattern = arrayReg.find(b)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    b =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
                 var arrayPattern = arrayReg.find(a)
                 if (arrayPattern != null) {
                     val arr = variables[arrayPattern.groupValues[1]] as List<String>
@@ -520,6 +610,18 @@ fun translation(
             "<" -> {
                 var a = stack.pop()
                 var b = stack.pop()
+                var arrayOfArrayPattern = arrayOfArrayReg.find(a)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    a =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
+                arrayOfArrayPattern = arrayReg.find(b)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    b =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
                 var arrayPattern = arrayReg.find(a)
                 if (arrayPattern != null) {
                     val arr = variables[arrayPattern.groupValues[1]] as List<String>
@@ -539,6 +641,18 @@ fun translation(
             "&" -> {
                 var a = stack.pop()
                 var b = stack.pop()
+                var arrayOfArrayPattern = arrayOfArrayReg.find(a)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    a =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
+                arrayOfArrayPattern = arrayReg.find(b)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    b =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
                 var arrayPattern = arrayReg.find(a)
                 if (arrayPattern != null) {
                     val arr = variables[arrayPattern.groupValues[1]] as List<String>
@@ -558,6 +672,18 @@ fun translation(
             "|" -> {
                 var a = stack.pop()
                 var b = stack.pop()
+                var arrayOfArrayPattern = arrayOfArrayReg.find(a)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    a =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
+                arrayOfArrayPattern = arrayReg.find(b)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    b =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
                 var arrayPattern = arrayReg.find(a)
                 if (arrayPattern != null) {
                     val arr = variables[arrayPattern.groupValues[1]] as List<String>
@@ -577,6 +703,18 @@ fun translation(
             "~" -> {
                 var a = stack.pop()
                 var b = stack.pop()
+                var arrayOfArrayPattern = arrayOfArrayReg.find(a)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    a =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
+                arrayOfArrayPattern = arrayReg.find(b)
+                if (arrayOfArrayPattern != null) {
+                    val arr = variables[arrayOfArrayPattern.groupValues[1]] as List<List<String>>
+                    b =
+                        arr[arrayOfArrayPattern.groupValues[2].toInt()][arrayOfArrayPattern.groupValues[3].toInt()]
+                }
                 var arrayPattern = arrayReg.find(a)
                 if (arrayPattern != null) {
                     val arr = variables[arrayPattern.groupValues[1]] as List<String>
