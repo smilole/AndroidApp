@@ -139,7 +139,7 @@ fun MainScreen(navController: NavController) {
                     modifier = Modifier
                         .size(125.dp)
                         .padding(5.dp)
-                        .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                        .background(color = Color.White, shape = RoundedCornerShape(4.dp))
                         .clickable { mainViewModel.list.add(BlockDeclaration()) },
                     contentAlignment = Alignment.Center
 
@@ -163,7 +163,7 @@ fun MainScreen(navController: NavController) {
                     modifier = Modifier
                         .size(125.dp)
                         .padding(5.dp)
-                        .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                        .background(color = Color.White, shape = RoundedCornerShape(4.dp))
                         .clickable { mainViewModel.list.add(BlockInit()) },
                     contentAlignment = Alignment.Center
                 ) {
@@ -186,7 +186,7 @@ fun MainScreen(navController: NavController) {
                     modifier = Modifier
                         .size(125.dp)
                         .padding(5.dp)
-                        .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                        .background(color = Color.White, shape = RoundedCornerShape(4.dp))
                         .clickable {
                             val blockIf = BlockIf(currentMark)
                             mainViewModel.list.add(blockIf)
@@ -214,7 +214,7 @@ fun MainScreen(navController: NavController) {
                     modifier = Modifier
                         .size(125.dp)
                         .padding(5.dp)
-                        .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                        .background(color = Color.White, shape = RoundedCornerShape(4.dp))
                         .clickable {
                             val blockWhile = BlockWhile(currentMark)
                             mainViewModel.list.add(blockWhile)
@@ -242,7 +242,7 @@ fun MainScreen(navController: NavController) {
                     modifier = Modifier
                         .size(125.dp)
                         .padding(5.dp)
-                        .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                        .background(color = Color.White, shape = RoundedCornerShape(4.dp))
                         .clickable {
                             val blockFor = BlockFor(currentMark)
                             mainViewModel.list.add(blockFor)
@@ -270,7 +270,7 @@ fun MainScreen(navController: NavController) {
                     modifier = Modifier
                         .size(125.dp)
                         .padding(5.dp)
-                        .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                        .background(color = Color.White, shape = RoundedCornerShape(4.dp))
                         .clickable { mainViewModel.list.add(BlockOutput()) },
                     contentAlignment = Alignment.Center
 
@@ -294,7 +294,7 @@ fun MainScreen(navController: NavController) {
                     modifier = Modifier
                         .size(125.dp)
                         .padding(5.dp)
-                        .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                        .background(color = Color.White, shape = RoundedCornerShape(4.dp))
                         .clickable { mainViewModel.list.add(BlockArrayDeclaration()) },
                     contentAlignment = Alignment.Center
 
@@ -318,7 +318,7 @@ fun MainScreen(navController: NavController) {
                     modifier = Modifier
                         .size(125.dp)
                         .padding(5.dp)
-                        .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                        .background(color = Color.White, shape = RoundedCornerShape(4.dp))
                         .clickable { mainViewModel.list.add(BlockArrayOfArrayDeclaration()) },
                     contentAlignment = Alignment.Center
 
@@ -343,7 +343,7 @@ fun MainScreen(navController: NavController) {
                     modifier = Modifier
                         .size(125.dp)
                         .padding(5.dp)
-                        .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                        .background(color = Color.White, shape = RoundedCornerShape(4.dp))
                         .clickable {
                             val blockElse = BlockElse(currentMark)
                             mainViewModel.list.add(blockElse)
