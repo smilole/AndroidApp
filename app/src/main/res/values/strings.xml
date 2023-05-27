@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="catblock">CatBlock</string>
+    <string name="obyavl">Объявление</string>
+    <string name="init">Инициализация</string>
+    <string name="uslov">Условие</string>
+    <string name="whil">While</string>
+    <string name="forcycle">For</string>
+    <string name="vivod">Вывод</string>
+    <string name="massiv">Массив</string>
+    <string name="dvum_massiv">Двумерный массив</string>
+    <string name="els">Else</string>
+    <string name="output">Output</string>
 </resources>

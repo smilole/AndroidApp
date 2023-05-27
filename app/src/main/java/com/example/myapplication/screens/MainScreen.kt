@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -62,7 +63,7 @@ fun MainScreen(navController: NavController) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "CatBlock",
+                    text = stringResource(R.string.catblock),
                     modifier = Modifier.clickable {
                         mainViewModel.list.clear()
                     },
@@ -151,7 +152,7 @@ fun MainScreen(navController: NavController) {
 
                     )
                     Text(
-                        text = "Объявление",
+                        text = stringResource(R.string.obyavl),
                         style = TextStyle(
                             fontFamily = FontFamily(Font(R.font.consolas)),
                             fontWeight = FontWeight.Bold
@@ -174,7 +175,7 @@ fun MainScreen(navController: NavController) {
 
                     )
                     Text(
-                        text = "Инициализация",
+                        text = stringResource(R.string.init),
                         style = TextStyle(
                             fontFamily = FontFamily(Font(R.font.consolas)),
                             fontWeight = FontWeight.Bold
@@ -202,7 +203,7 @@ fun MainScreen(navController: NavController) {
 
                     )
                     Text(
-                        text = "Условие",
+                        text = stringResource(R.string.uslov),
                         style = TextStyle(
                             fontFamily = FontFamily(Font(R.font.consolas)),
                             fontWeight = FontWeight.Bold
@@ -230,7 +231,7 @@ fun MainScreen(navController: NavController) {
 
                     )
                     Text(
-                        text = "While",
+                        text = stringResource(R.string.whil),
                         style = TextStyle(
                             fontFamily = FontFamily(Font(R.font.consolas)),
                             fontWeight = FontWeight.Bold
@@ -258,7 +259,7 @@ fun MainScreen(navController: NavController) {
 
                     )
                     Text(
-                        text = "For",
+                        text = stringResource(R.string.forcycle),
                         style = TextStyle(
                             fontFamily = FontFamily(Font(R.font.consolas)),
                             fontWeight = FontWeight.Bold
@@ -282,7 +283,7 @@ fun MainScreen(navController: NavController) {
 
                     )
                     Text(
-                        text = "Вывод",
+                        text = stringResource(R.string.vivod),
                         style = TextStyle(
                             fontFamily = FontFamily(Font(R.font.consolas)),
                             fontWeight = FontWeight.Bold
@@ -306,7 +307,7 @@ fun MainScreen(navController: NavController) {
 
                     )
                     Text(
-                        text = "Массив",
+                        text = stringResource(R.string.massiv),
                         style = TextStyle(
                             fontFamily = FontFamily(Font(R.font.consolas)),
                             fontWeight = FontWeight.Bold
@@ -330,7 +331,7 @@ fun MainScreen(navController: NavController) {
 
                     )
                     Text(
-                        text = "Двумерный массив",
+                        text = stringResource(R.string.dvum_massiv),
                         style = TextStyle(
                             fontFamily = FontFamily(Font(R.font.consolas)),
                             fontWeight = FontWeight.Bold
@@ -359,7 +360,7 @@ fun MainScreen(navController: NavController) {
                         modifier = Modifier.align(Alignment.BottomCenter)
                     )
                     Text(
-                        text = "Else",
+                        text = stringResource(R.string.els),
                         style = TextStyle(
                             fontFamily = FontFamily(Font(R.font.consolas)),
                             fontWeight = FontWeight.Bold
